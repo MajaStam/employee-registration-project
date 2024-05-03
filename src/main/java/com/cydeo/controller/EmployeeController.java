@@ -32,6 +32,9 @@ public class EmployeeController {
     public String insertEmployee(@ModelAttribute("employee")Employee employee){
         employeeService.saveEmployee(employee);
         return "employee/employee-list";
+
+
+
     }
 
 
