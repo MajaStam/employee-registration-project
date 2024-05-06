@@ -3,6 +3,7 @@ package com.cydeo.controller;
 import com.cydeo.bootstrap.DataGenerator;
 import com.cydeo.model.Employee;
 import com.cydeo.service.EmployeeService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,7 +34,7 @@ public class EmployeeController {
     }
 
     @PostMapping("/insert")
-    public String insertEmployee(@ModelAttribute("employee") @Validated Employee employee, BindingResult bindingResult, Model model) {
+    public String insertEmployee(@ModelAttribute("employee") @Valid Employee employee, BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("stateList", DataGenerator.getAllStates());
