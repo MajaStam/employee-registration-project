@@ -5,6 +5,8 @@ import com.cydeo.model.Employee;
 import com.cydeo.service.EmployeeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,31 +16,38 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/employee")
 public class EmployeeController {
 
-    private EmployeeService employeeService;
+    private final EmployeeService employeeService;
 
-
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
 
     @GetMapping("/register")
-    public String createEmployee(Model model){
-        model.addAttribute("employee",new Employee());
+    public String createEmployee(Model model) {
+
+        model.addAttribute("employee", new Employee());
         model.addAttribute("stateList", DataGenerator.getAllStates());
-
-
 
         return "employee/employee-create";
 
     }
+
     @PostMapping("/insert")
-    public String insertEmployee(@ModelAttribute("employee")Employee employee){
+    public String insertEmployee(@ModelAttribute("employee") @Validated Employee employee, BindingResult bindingResult, Model model) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("stateList", DataGenerator.getAllStates());
+            return "employee/employee-create";
+        }
+
         employeeService.saveEmployee(employee);
-        return "employee/employee-list";
-
-
-
+        return "redirect:/employee/list";   // With redirect we are using endpoints
     }
 
-
-
-
+    @GetMapping("/list")
+    public String listEmployees(Model model) {
+        model.addAttribute("employeeList", employeeService.readAllEmployees());
+        return "employee/employee-list";   // Without redirect we are using html file paths
+    }
 
 }
